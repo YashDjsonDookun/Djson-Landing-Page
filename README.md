@@ -325,7 +325,11 @@ That runs `make build` (with `.env` contact vars) and uploads `dist/` to Cloudfl
    | Framework preset | Astro |
    | Build command | `npm ci && npm run build` |
    | Build output directory | `dist` |
+   | **Deploy command** | `bash scripts/cf-pages-deploy.sh` |
    | Node version | `22` (or set env `NODE_VERSION=22`) |
+
+   > **Do not use** `npx wrangler deploy` — that is for Workers and will fail.
+   > Use `wrangler pages deploy` (via the script above) to upload `dist/`.
 
 4. **Environment variables** (Settings → Environment variables) — add for Production:
 
@@ -338,6 +342,26 @@ That runs `make build` (with `.env` contact vars) and uploads `dist/` to Cloudfl
 5. Save and deploy. Each `git push` to `main` rebuilds the site.
 
 6. Attach custom domain under **Custom domains** (same as Option A step 5).
+
+---
+
+### Fix: build succeeds but deploy fails (`wrangler deploy`)
+
+If logs show **Build command completed** then **Failed on `npx wrangler deploy`**:
+
+1. Cloudflare dashboard → your Pages project → **Settings** → **Build**
+2. Set **Deploy command** to:
+
+   ```bash
+   bash scripts/cf-pages-deploy.sh
+   ```
+
+   (Or inline: `npx wrangler pages deploy dist --project-name=yashdookun --branch=main` — use your real project name.)
+
+3. Confirm **Build command** is `npm ci && npm run build` and output directory is `dist`
+4. **Retry deployment**
+
+If your project name is not `yashdookun`, either rename it in the dashboard to match `wrangler.toml`, or edit `scripts/cf-pages-deploy.sh` / pass `CLOUDFLARE_PROJECT_NAME` in Cloudflare env vars.
 
 ---
 
@@ -393,6 +417,7 @@ See `scripts/bootstrap-server.sh` and `.env.example` (`SERVER_IP`, `SITE_DOMAIN`
 | `make dev` fails | `make clean && make install` |
 | Contact links wrong on live site | Update `.env`, run `make deploy-cloudflare` |
 | `wrangler` not authenticated | `make cf-login` |
+| Build OK, deploy fails on `wrangler deploy` | Use `bash scripts/cf-pages-deploy.sh` as deploy command (not `wrangler deploy`) |
 | Deploy fails: project not found | Set `CLOUDFLARE_PROJECT_NAME` in `.env` or create project in dashboard |
 | Custom domain not working | Cloudflare dashboard → Custom domains; check DNS (orange cloud = proxied) |
 | Old site after deploy | Hard refresh; Cloudflare cache clears in ~minutes, or Purge Cache in dashboard |

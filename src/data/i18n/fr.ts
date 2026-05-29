@@ -356,7 +356,16 @@ export const scope = {
 
 export const projectsSection = {
   heading: 'Systèmes & travaux techniques sélectionnés',
-  subtitle: 'Vrais projets. Pas des templates ou des tutoriels.',
+  subtitle: 'Vrais systèmes pour de vrais problèmes — pipelines de données, monitoring, legal tech et automatisation IA.',
+  problemsHeading: 'Problèmes que je résous',
+  problems: [
+    'Remplacer les workflows basés sur des tableurs',
+    'Centraliser des processus fragmentés',
+    'Construire des outils métier internes',
+    'Exposer des APIs propres',
+    'Transformer des données désordonnées en information exploitable',
+  ],
+  highlightsLabel: 'Ce que cela apporte',
   viewGithub: 'Voir sur GitHub',
   feedsInto: 'alimente',
 };

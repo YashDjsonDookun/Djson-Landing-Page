@@ -356,7 +356,16 @@ export const scope = {
 
 export const projectsSection = {
   heading: 'Selected Systems & Technical Work',
-  subtitle: 'Real projects. Not templates or tutorials.',
+  subtitle: 'Real systems built for real problems — data pipelines, monitoring tools, legal tech, and AI automation.',
+  problemsHeading: 'Problems I solve',
+  problems: [
+    'Replace spreadsheet-heavy workflows',
+    'Centralize fragmented processes',
+    'Build internal business tools',
+    'Expose clean APIs',
+    'Turn messy data into usable information',
+  ],
+  highlightsLabel: 'What this delivers',
   viewGithub: 'View on GitHub',
   feedsInto: 'feeds into',
 };

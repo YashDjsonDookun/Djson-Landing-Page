@@ -364,7 +364,16 @@ export const scope = {
 
 export const projectsSection = {
   heading: 'Systems & travay teknik seleksyone',
-  subtitle: 'Vre proze. Pa templates ou tutorials.',
+  subtitle: 'Vre systems pou vre problems — data pipelines, monitoring tools, legal tech ek AI automation.',
+  problemsHeading: 'Problems ki mo rezoud',
+  problems: [
+    'Ranplas workflow ki depann tro lor spreadsheets',
+    'Sentralize bann process ki fragmente',
+    'Build internal business tools',
+    'Expose clean APIs',
+    'Transform messy data an information itilizab',
+  ],
+  highlightsLabel: 'Ki sa delivre',
   viewGithub: 'Get lor GitHub',
   feedsInto: 'feeds into',
 };

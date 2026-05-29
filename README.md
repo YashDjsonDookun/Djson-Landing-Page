@@ -363,6 +363,25 @@ If logs show **Build command completed** then **Failed on `npx wrangler deploy`*
 
 If your project name is not `yashdookun`, either rename it in the dashboard to match `wrangler.toml`, or edit `scripts/cf-pages-deploy.sh` / pass `CLOUDFLARE_PROJECT_NAME` in Cloudflare env vars.
 
+### Fix: Authentication error [code: 10000] on deploy
+
+Logs show `CLOUDFLARE_API_TOKEN` with **Authentication error** — the token in your Pages env vars does not have **Pages** permission (even if your login is Super Admin; API tokens are scoped separately).
+
+**Fix (try this first):**
+
+1. Cloudflare → your Pages project → **Settings** → **Environment variables**
+2. **Delete** `CLOUDFLARE_API_TOKEN` (and `CLOUDFLARE_ACCOUNT_ID` if you added it) from Production
+3. **Retry deployment**
+
+Cloudflare’s own build runner usually authenticates Wrangler without a custom token.
+
+**If you must keep a token** (e.g. external CI), create one at [API Tokens](https://dash.cloudflare.com/profile/api-tokens):
+
+- **Custom token**
+- Permissions: **Account** → **Cloudflare Pages** → **Edit**
+- Account resources: include your account
+- Set in Pages env: `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` (your account ID from the build log)
+
 ---
 
 ### Cloudflare notes
@@ -418,6 +437,7 @@ See `scripts/bootstrap-server.sh` and `.env.example` (`SERVER_IP`, `SITE_DOMAIN`
 | Contact links wrong on live site | Update `.env`, run `make deploy-cloudflare` |
 | `wrangler` not authenticated | `make cf-login` |
 | Build OK, deploy fails on `wrangler deploy` | Use `bash scripts/cf-pages-deploy.sh` as deploy command (not `wrangler deploy`) |
+| Deploy: Authentication error 10000 | Remove `CLOUDFLARE_API_TOKEN` from Pages env vars, or give token **Pages → Edit** |
 | Deploy fails: project not found | Set `CLOUDFLARE_PROJECT_NAME` in `.env` or create project in dashboard |
 | Custom domain not working | Cloudflare dashboard → Custom domains; check DNS (orange cloud = proxied) |
 | Old site after deploy | Hard refresh; Cloudflare cache clears in ~minutes, or Purge Cache in dashboard |

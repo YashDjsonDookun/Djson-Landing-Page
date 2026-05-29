@@ -1,0 +1,48 @@
+---
+interface TerminalLine {
+  type: 'command' | 'info' | 'success' | 'result' | 'table' | 'blank';
+  text: string;
+}
+
+interface Props {
+  lines: TerminalLine[];
+  title?: string;
+}
+
+const { lines, title = 'terminal' } = Astro.props;
+
+function formatLine(line: TerminalLine): string {
+  if (line.type === 'blank') return '';
+  if (line.type === 'command') return `$ ${line.text}`;
+  return `  ${line.text}`;
+}
+
+function lineClass(type: string): string {
+  const map: Record<string, string> = {
+    command: 'text-slate-200',
+    info: 'text-slate-400',
+    success: 'text-emerald-300',
+    result: 'text-sky-300',
+    table: 'text-slate-300',
+    blank: '',
+  };
+  return map[type] || '';
+}
+---
+
+<div class="terminal-block overflow-hidden rounded-lg border border-[#2a2d35] bg-[#0d1117] shadow-lg">
+  <div class="flex items-center gap-1.5 border-b border-[#2a2d35] bg-[#161b22] px-3 py-2 sm:gap-2 sm:px-4 sm:py-2.5">
+    <span class="h-2 w-2 rounded-full bg-[#ff5f57] sm:h-3 sm:w-3"></span>
+    <span class="h-2 w-2 rounded-full bg-[#febc2e] sm:h-3 sm:w-3"></span>
+    <span class="h-2 w-2 rounded-full bg-[#28c840] sm:h-3 sm:w-3"></span>
+    <span class="ml-1.5 font-mono text-[9px] text-slate-500 sm:ml-2 sm:text-[10px]">{title}</span>
+  </div>
+  <pre class="overflow-x-auto p-3 font-mono text-[10px] leading-relaxed sm:p-4 sm:text-xs"><code>{lines.map((line) => {
+    const text = formatLine(line);
+    const cls = lineClass(line.type);
+    if (line.type === 'command') {
+      return <div class={cls}><span class="text-emerald-400">$</span>{` ${line.text}`}</div>;
+    }
+    return <div class={cls}>{text}</div>;
+  })}</code></pre>
+</div>

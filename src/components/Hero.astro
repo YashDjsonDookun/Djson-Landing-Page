@@ -1,0 +1,150 @@
+---
+import { t, type Locale } from '../data/i18n';
+
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const content = t(locale);
+const { hero, terminalScenarios } = content;
+---
+
+<section class="relative overflow-hidden border-b border-border">
+  <div class="dot-grid pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-6xl px-5 py-16 sm:px-6 md:py-24 lg:py-28">
+    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
+      <div>
+        <div class="reveal">
+          <span class="inline-block rounded-full border border-border bg-warm-bg px-3 py-1 font-mono text-[11px] text-muted transition-colors sm:px-4 sm:py-1.5 sm:text-xs">
+            {hero.badge}
+          </span>
+        </div>
+
+        <h1 class="reveal reveal-delay-1 mt-5 text-2xl font-bold leading-tight tracking-tight text-charcoal sm:mt-6 sm:text-3xl md:text-4xl lg:text-[2.75rem]">
+          {hero.headline}
+          <span class="text-navy">{hero.headlineAccent}</span>
+        </h1>
+
+        <p class="reveal reveal-delay-2 mt-4 max-w-lg text-base leading-relaxed text-muted sm:mt-6 sm:text-lg">
+          {hero.subtext}
+        </p>
+
+        <div class="reveal reveal-delay-3 mt-6 flex flex-wrap gap-3 sm:mt-8 sm:gap-4">
+          <a
+            href={hero.ctaPrimary.href}
+            class="group rounded-md border border-navy bg-navy px-5 py-2.5 text-sm font-medium text-offwhite transition-all hover:bg-navy-light hover:shadow-lg sm:px-6 sm:py-3"
+          >
+            {hero.ctaPrimary.label}
+            <span class="ml-1 inline-block transition-transform group-hover:translate-x-0.5">&rarr;</span>
+          </a>
+          <a
+            href={hero.ctaSecondary.href}
+            class="rounded-md border border-border px-5 py-2.5 text-sm font-medium text-charcoal transition-all hover:border-border-dark hover:bg-warm-bg hover:shadow-sm sm:px-6 sm:py-3"
+          >
+            {hero.ctaSecondary.label}
+          </a>
+        </div>
+
+        <p class="reveal reveal-delay-4 mt-8 font-mono text-[11px] leading-relaxed tracking-wide text-muted sm:mt-10 sm:text-xs">
+          {hero.credentials}
+        </p>
+      </div>
+
+      <div class="reveal reveal-delay-3 hidden md:block">
+        <div class="hero-terminal overflow-hidden rounded-lg border border-[#2a2d35] bg-[#0d1117] shadow-2xl">
+          <div class="flex items-center gap-2 border-b border-[#2a2d35] bg-[#161b22] px-3 py-2 sm:px-4 sm:py-2.5">
+            <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57] sm:h-3 sm:w-3"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[#febc2e] sm:h-3 sm:w-3"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[#28c840] sm:h-3 sm:w-3"></span>
+            <span id="hero-term-title" class="ml-2 font-mono text-[10px] text-slate-500">workflow-analysis</span>
+          </div>
+          <div id="hero-term-body" class="h-[220px] p-4 font-mono text-[11px] leading-[1.8] sm:p-5 sm:text-xs" data-scenarios={JSON.stringify(terminalScenarios)}>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accent-line" aria-hidden="true"></div>
+</section>
+
+<script>
+  const body = document.getElementById('hero-term-body');
+  const titleEl = document.getElementById('hero-term-title');
+  if (!body || !titleEl) throw new Error('Terminal elements missing');
+
+  const scenarios = JSON.parse(body.dataset.scenarios!);
+
+  let idx = 0;
+  let running = false;
+
+  function createLine(html: string, colorClass: string): HTMLDivElement {
+    const div = document.createElement('div');
+    if (colorClass) div.className = colorClass;
+    div.innerHTML = html;
+    return div;
+  }
+
+  function sleep(ms: number): Promise<void> {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  async function typeCommand(text: string): Promise<void> {
+    const line = createLine('<span class="text-emerald-400">$</span> <span class="text-slate-200 hero-cmd"></span><span class="hero-cursor">▌</span>', '');
+    body!.appendChild(line);
+    const cmdSpan = line.querySelector('.hero-cmd')!;
+    const cursor = line.querySelector('.hero-cursor')!;
+
+    for (let i = 0; i < text.length; i++) {
+      cmdSpan.textContent = text.slice(0, i + 1);
+      await sleep(28 + Math.random() * 32);
+    }
+
+    (cursor as HTMLElement).remove();
+  }
+
+  async function printLines(lines: { text: string; color: string }[]): Promise<void> {
+    for (const l of lines) {
+      const div = createLine(l.text || '&nbsp;', l.color);
+      div.style.opacity = '0';
+      div.style.transform = 'translateY(3px)';
+      body!.appendChild(div);
+      await sleep(10);
+      div.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      div.style.opacity = '1';
+      div.style.transform = 'translateY(0)';
+      await sleep(120 + Math.random() * 80);
+    }
+  }
+
+  async function runScenario(): Promise<void> {
+    if (running) return;
+    running = true;
+
+    const s = scenarios[idx];
+    idx = (idx + 1) % scenarios.length;
+
+    body!.innerHTML = '';
+    titleEl!.textContent = s.title;
+
+    await sleep(400);
+    await typeCommand(s.command);
+    await sleep(300);
+    await printLines(s.lines);
+    await sleep(4000);
+
+    running = false;
+    runScenario();
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        observer.disconnect();
+        runScenario();
+      }
+    },
+    { threshold: 0.3 }
+  );
+
+  observer.observe(body);
+</script>

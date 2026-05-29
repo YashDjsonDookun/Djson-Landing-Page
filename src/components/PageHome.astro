@@ -1,0 +1,43 @@
+---
+import type { Locale } from '../data/i18n';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Hero from './Hero.astro';
+import TechStack from './TechStack.astro';
+import BuildAreas from './BuildAreas.astro';
+import Services from './Services.astro';
+import Process from './Process.astro';
+import StatsRow from './StatsRow.astro';
+import Boundaries from './Boundaries.astro';
+import Projects from './Projects.astro';
+import About from './About.astro';
+import Principles from './Principles.astro';
+import FAQ from './FAQ.astro';
+import Contact from './Contact.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<BaseLayout locale={locale}>
+  <Header locale={locale} />
+  <main id="main-content">
+    <Hero locale={locale} />
+    <TechStack locale={locale} />
+    <BuildAreas locale={locale} />
+    <Services locale={locale} />
+    <Process locale={locale} />
+    <StatsRow locale={locale} />
+    <Boundaries locale={locale} />
+    <Projects locale={locale} />
+    <About locale={locale} />
+    <Principles locale={locale} />
+    <FAQ locale={locale} />
+    <Contact locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

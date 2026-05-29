@@ -1,0 +1,40 @@
+---
+import { t, localeFromPath, type Locale } from '../data/i18n';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const content = t(locale);
+const { notFoundPage } = content;
+---
+
+<BaseLayout locale={locale} title={`${notFoundPage.title} — Yash Djson Dookun`} description={notFoundPage.message}>
+  <Header locale={locale} />
+  <main class="flex items-center justify-center px-5 py-24 sm:px-6 md:py-32">
+    <div class="text-center">
+      <p class="font-mono text-sm text-navy">{notFoundPage.heading}</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-charcoal md:text-4xl">
+        {notFoundPage.title}
+      </h1>
+      <p class="mt-4 max-w-md text-sm leading-relaxed text-muted">
+        {notFoundPage.message}
+      </p>
+      <div class="mt-8 flex items-center justify-center gap-4">
+        <a
+          href="/"
+          class="rounded-md border border-navy bg-navy px-5 py-2.5 text-sm font-medium text-offwhite transition-all hover:bg-navy-light hover:shadow-lg"
+        >
+          {notFoundPage.homeLink}
+        </a>
+        <a
+          href="#contact"
+          class="rounded-md border border-border px-5 py-2.5 text-sm font-medium text-charcoal transition-all hover:border-border-dark hover:bg-warm-bg hover:shadow-sm"
+        >
+          {notFoundPage.contactLink}
+        </a>
+      </div>
+    </div>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

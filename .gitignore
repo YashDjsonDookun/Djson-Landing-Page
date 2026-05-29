@@ -1,0 +1,14 @@
+dist/
+.astro/
+node_modules/
+.env
+.DS_Store
+
+# Playwright
+test-results/
+playwright-report/
+
+# Editor
+.vscode/
+*.swp
+*.swo

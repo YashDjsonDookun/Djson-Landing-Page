@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#2B3A4E"/>
+  <g fill="#FAF9F6">
+    <!-- Y: two angled strokes meeting at center, then a stem down -->
+    <polygon points="5,7 9,7 12,13 15,7 19,7 14,15 14,25 10,25 10,15"/>
+    <!-- D: vertical bar + arc -->
+    <path d="M20,7 H24 C28,7 29,10 29,16 C29,22 28,25 24,25 H20 Z M23.5,10.5 V21.5 C26,21.5 26.5,19 26.5,16 C26.5,13 26,10.5 23.5,10.5 Z" fill-rule="evenodd"/>
+  </g>
+</svg>

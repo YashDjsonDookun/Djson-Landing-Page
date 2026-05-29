@@ -1,0 +1,22 @@
+---
+interface Props {
+  steps: string[];
+}
+
+const { steps } = Astro.props;
+---
+
+<div class="flex flex-wrap items-center gap-1 py-2">
+  {steps.map((step, i) => (
+    <div class="flex shrink-0 items-center gap-1">
+      <span class="rounded bg-navy/10 px-1.5 py-0.5 font-mono text-[9px] text-navy whitespace-nowrap sm:px-2 sm:text-[10px]">
+        {step}
+      </span>
+      {i < steps.length - 1 && (
+        <svg class="h-2.5 w-2.5 shrink-0 text-border-dark sm:h-3 sm:w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      )}
+    </div>
+  ))}
+</div>

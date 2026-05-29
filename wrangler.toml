@@ -1,0 +1,6 @@
+# Cloudflare Pages — used by `wrangler pages deploy`
+# Docs: https://developers.cloudflare.com/pages/
+
+name = "yashdookun"
+compatibility_date = "2025-05-28"
+pages_build_output_dir = "dist"

@@ -1,0 +1,69 @@
+---
+import { t, type Locale } from '../data/i18n';
+import { channels, contact } from '../data/contact';
+
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const { contactSection } = t(locale);
+
+const iconPaths: Record<string, string> = {
+  email: 'M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75',
+  whatsapp: 'M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z',
+  linkedin: 'M20.25 14.15v4.073c0 .211-.041.412-.116.597a1.39 1.39 0 01-.833.833 1.393 1.393 0 01-.597.116H5.296a1.393 1.393 0 01-.597-.116 1.39 1.39 0 01-.833-.833 1.393 1.393 0 01-.116-.597V5.296c0-.211.041-.412.116-.597a1.39 1.39 0 01.833-.833c.185-.075.386-.116.597-.116h13.408c.211 0 .412.041.597.116.185.075.353.186.49.343.138.157.24.338.343.49.075.185.116.386.116.597v8.854zM8.25 10.5v7.5m3.75-5.25v5.25m0-5.25a3 3 0 116 0v5.25M8.25 7.875a.375.375 0 10-.75 0 .375.375 0 00.75 0z',
+  github: 'M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z',
+};
+---
+
+<section id="contact" class="relative border-b border-border">
+  <div class="dot-grid pointer-events-none absolute inset-0 opacity-30" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-6xl px-5 py-14 sm:px-6 md:py-20">
+    <div class="reveal flex items-center gap-3">
+      <svg class="h-6 w-6 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12.75a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+      </svg>
+      <h2 class="text-2xl font-bold tracking-tight text-charcoal md:text-3xl">
+        {contactSection.heading}
+      </h2>
+    </div>
+    <p class="reveal reveal-delay-1 mt-4 max-w-xl text-sm leading-relaxed text-muted">
+      {contactSection.subtitle}
+    </p>
+
+    <div class="reveal reveal-delay-2 mt-6 grid gap-3 grid-cols-2 sm:mt-8 sm:gap-4 lg:grid-cols-4">
+      {channels.map((channel) => (
+        <a
+          href={channel.href}
+          target={channel.icon === 'email' ? undefined : '_blank'}
+          rel={channel.icon === 'email' ? undefined : 'noopener noreferrer'}
+          class="group flex items-center gap-3 rounded-lg border border-border p-4 text-sm text-charcoal-light transition-all duration-300 hover:border-navy/30 hover:shadow-md hover:shadow-accent-glow"
+        >
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-navy/5 transition-colors group-hover:bg-navy/10">
+            <svg class="h-4.5 w-4.5 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d={iconPaths[channel.icon]} />
+            </svg>
+          </div>
+          {channel.label}
+        </a>
+      ))}
+    </div>
+
+    <div class="reveal reveal-delay-3 mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4">
+      <a
+        href={`mailto:${contact.email}?subject=${contactSection.ctaPrimary.emailSubject}`}
+        class="group rounded-md border border-navy bg-navy px-5 py-2.5 text-center text-sm font-medium text-offwhite transition-all hover:bg-navy-light hover:shadow-lg sm:px-6 sm:py-3 sm:text-left"
+      >
+        {contactSection.ctaPrimary.label}
+        <span class="ml-1 inline-block transition-transform group-hover:translate-x-0.5">&rarr;</span>
+      </a>
+      <a
+        href={contact.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="rounded-md border border-border px-5 py-2.5 text-center text-sm font-medium text-charcoal transition-all hover:border-border-dark hover:bg-warm-bg hover:shadow-sm sm:px-6 sm:py-3 sm:text-left"
+      >
+        {contactSection.ctaSecondary.label}
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,52 @@
+---
+import { t, type Locale } from '../data/i18n';
+
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const { scope } = t(locale);
+const focus = scope.items;
+---
+
+<section class="relative border-b border-border">
+  <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-warm-bg/60 to-transparent" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-6xl px-5 py-14 sm:px-6 md:py-20">
+    <div class="reveal flex items-center gap-3">
+      <svg class="h-6 w-6 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <h2 class="text-2xl font-bold tracking-tight text-charcoal md:text-3xl">
+        {scope.heading}
+      </h2>
+    </div>
+    <p class="reveal reveal-delay-1 mt-2 max-w-xl text-sm leading-relaxed text-muted">
+      {scope.subtitle}
+    </p>
+
+    <div class="reveal reveal-delay-2 mt-10 hidden overflow-hidden rounded-lg border border-border sm:block">
+      <div class="grid grid-cols-2 border-b border-border bg-warm-bg px-5 py-3">
+        <span class="font-mono text-xs font-medium tracking-wide text-navy">{scope.labels.whatIDo}</span>
+        <span class="font-mono text-xs font-medium tracking-wide text-muted">{scope.labels.outsideScope}</span>
+      </div>
+      {focus.map((item, i) => (
+        <div class={`grid grid-cols-2 px-5 py-3 text-sm ${i < focus.length - 1 ? 'border-b border-border' : ''}`}>
+          <span class="text-charcoal-light">{item.area}</span>
+          <span class="text-muted">{item.not}</span>
+        </div>
+      ))}
+    </div>
+
+    <div class="reveal reveal-delay-2 mt-8 space-y-3 sm:hidden">
+      {focus.map((item) => (
+        <div class="rounded-lg border border-border p-4">
+          <p class="text-sm font-medium text-charcoal-light">{item.area}</p>
+          <p class="mt-1 text-xs text-muted">{scope.labels.notPrefix} {item.not}</p>
+        </div>
+      ))}
+    </div>
+
+    <p class="reveal reveal-delay-3 mt-6 max-w-2xl text-sm leading-relaxed text-muted">
+      {scope.footer}
+    </p>
+  </div>
+</section>

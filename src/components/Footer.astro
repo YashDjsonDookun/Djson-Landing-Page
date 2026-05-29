@@ -1,0 +1,23 @@
+---
+import { t, sharedConfig, type Locale } from '../data/i18n';
+
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const { footer } = t(locale);
+---
+
+<footer class="bg-warm-bg transition-colors">
+  <div class="accent-line" aria-hidden="true"></div>
+  <div class="mx-auto max-w-6xl px-5 py-6 sm:px-6 sm:py-8">
+    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+      <p class="text-xs text-muted">
+        &copy; {new Date().getFullYear()} {sharedConfig.name}
+      </p>
+      <div class="flex items-center gap-6">
+        {footer.links.map((link) => (
+          <a href={link.href} class="text-xs text-muted transition-colors hover:text-charcoal">{link.label}</a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>

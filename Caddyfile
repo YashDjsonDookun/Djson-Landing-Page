@@ -1,0 +1,31 @@
+# SITE_DOMAIN=yashdookun.com  → automatic HTTPS (Let's Encrypt)
+# SITE_DOMAIN=:80             → local Docker preview (HTTP only)
+{$SITE_DOMAIN} {
+	root * /srv
+	file_server
+	encode gzip
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+	}
+
+	@immutable path /_astro/* /fonts/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+	@static path *.png *.svg *.ico *.webp *.json
+	header @static Cache-Control "public, max-age=86400, stale-while-revalidate=604800"
+
+	@html path *.html /
+	header @html Cache-Control "public, max-age=0, must-revalidate"
+
+	try_files {path} {path}.html {path}/index.html
+	handle_errors {
+		@404 expression {err.status_code} == 404
+		rewrite @404 /404.html
+		file_server
+	}
+}

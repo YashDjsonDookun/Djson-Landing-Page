@@ -1,0 +1,143 @@
+---
+import '../styles/global.css';
+import { t, locales, localePath, sharedConfig, hreflangMap, type Locale } from '../data/i18n';
+
+interface Props {
+  locale?: Locale;
+  title?: string;
+  description?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const content = t(locale);
+
+const title = Astro.props.title ?? content.siteTitle;
+const description = Astro.props.description ?? content.siteDescription;
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || sharedConfig.url;
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      name: sharedConfig.name,
+      url: siteUrl,
+      description,
+    },
+    {
+      '@type': 'Person',
+      name: sharedConfig.name,
+      url: siteUrl,
+      jobTitle: 'Senior IT Consultant',
+      address: { '@type': 'PostalAddress', addressCountry: 'MU' },
+      sameAs: [
+        'https://github.com/YashDjsonDookun',
+        'https://www.linkedin.com/in/yashdjsondookun',
+      ],
+    },
+    {
+      '@type': 'ProfessionalService',
+      name: `${sharedConfig.name} — IT Consulting & Software Development`,
+      url: siteUrl,
+      description: 'Lightweight business systems, APIs, dashboards, and data tools for SMEs',
+      areaServed: { '@type': 'Country', name: 'Mauritius' },
+      serviceType: ['Software Development', 'API Development', 'Data Engineering', 'Internal Business Tools'],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'dookun88@gmail.com',
+        contactType: 'customer service',
+        availableLanguage: ['English', 'French'],
+      },
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang={content.htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={sharedConfig.name} />
+
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    {locales.map((l) => (
+      <link rel="alternate" hreflang={hreflangMap[l.code]} href={`${siteUrl}${localePath(l.code)}`} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={`${siteUrl}/`} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={content.ogLocale} />
+    <meta property="og:site_name" content={sharedConfig.name} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+
+    <!-- Theme color for browser chrome -->
+    <meta name="theme-color" content={sharedConfig.themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={sharedConfig.themeColorDark} media="(prefers-color-scheme: dark)" />
+
+    <!-- Self-hosted fonts -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    {/* Analytics — uncomment ONE when ready:
+      <script defer data-domain="yashdookun.com" src="https://plausible.io/js/script.js" />
+      <script defer src="https://your-umami-instance.com/script.js" data-website-id="YOUR-ID" />
+    */}
+
+    <!-- Prevent flash of wrong theme -->
+    <script is:inline>
+      (function() {
+        var s = localStorage.getItem('theme');
+        if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-navy focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-offwhite focus:outline-none">
+      {content.skipToContent}
+    </a>
+
+    <slot />
+
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      );
+
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>
